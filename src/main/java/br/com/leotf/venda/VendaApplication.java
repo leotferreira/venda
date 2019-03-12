@@ -9,10 +9,15 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import br.com.leotf.venda.domain.Categoria;
 import br.com.leotf.venda.domain.Cidade;
+import br.com.leotf.venda.domain.Cliente;
+import br.com.leotf.venda.domain.Endereco;
 import br.com.leotf.venda.domain.Estado;
 import br.com.leotf.venda.domain.Produto;
+import br.com.leotf.venda.domain.enums.TipoCliente;
 import br.com.leotf.venda.repositories.CategoriaRepository;
 import br.com.leotf.venda.repositories.CidadeRepository;
+import br.com.leotf.venda.repositories.ClienteRepository;
+import br.com.leotf.venda.repositories.EnderecoRepository;
 import br.com.leotf.venda.repositories.EstadoRepository;
 import br.com.leotf.venda.repositories.ProdutoRepository;
 
@@ -31,6 +36,11 @@ public class VendaApplication implements CommandLineRunner {
 	@Autowired
 	private CidadeRepository cidadeRepository;
 	
+	@Autowired
+	private ClienteRepository clienteRepository;
+	
+	@Autowired
+	private EnderecoRepository enderecoRepository;
 	
 	
 	public static void main(String[] args) {
@@ -69,6 +79,19 @@ public class VendaApplication implements CommandLineRunner {
 		estadoRepository.saveAll(Arrays.asList(est1, est2));
 		cidadeRepository.saveAll(Arrays.asList(c1, c2, c3));
 		
+		
+		Cliente cli1 = new Cliente(null, "Maria Silva", "maria@gmail.com", "09912854215", TipoCliente.PESSOAFISICA);
+		
+		cli1.getTelefones().addAll(Arrays.asList("26225859", "96588545"));
+		
+		Endereco e1 = new Endereco(null, "Rua Flores", "300", "Apto 303", "Jardim", "38220834", cli1, c1);
+		Endereco e2 = new Endereco(null, "Avenida Matos", "105", "Sala 800", "Centro", "38777012", cli1, c2);
+		
+		cli1.getEnderecos().addAll(Arrays.asList(e1, e2));
+		
+		
+		clienteRepository.saveAll(Arrays.asList(cli1));
+		enderecoRepository.saveAll(Arrays.asList(e1, e2));
 		
 	}
 
