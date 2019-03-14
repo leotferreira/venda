@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import br.com.leotf.venda.domain.Categoria;
+import br.com.leotf.venda.dto.CategoriaDTO;
 import br.com.leotf.venda.repositories.CategoriaRepository;
 import br.com.leotf.venda.services.exceptions.DataIntegrityException;
 import br.com.leotf.venda.services.exceptions.ObjectNotFoundException;
@@ -69,6 +70,10 @@ public class CategoriaService {
 	
 	
 	
-	
+	public Categoria fromDTO(CategoriaDTO objDto) {
+		return new Categoria(objDto.getId(), objDto.getNome());
+		
+		
+	}
 	
 }
