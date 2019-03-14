@@ -1,5 +1,6 @@
 package br.com.leotf.venda.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.leotf.venda.domain.Categoria;
 import br.com.leotf.venda.repositories.CategoriaRepository;
+import br.com.leotf.venda.services.exceptions.DataIntegrityException;
 import br.com.leotf.venda.services.exceptions.ObjectNotFoundException;
 
 @Service
@@ -35,4 +37,28 @@ public class CategoriaService {
 		return repo.save(obj);
 
 }
+	
+	public void deleteById(Integer id) {
+		find(id);
+		try {
+		repo.deleteById(id);
+		}
+		catch (DataIntegrityException e) {
+			
+			throw new DataIntegrityException("Não é possível excluir uma categoria que possui produtos");
+			
+		}
+		
+		
+		
+	}
+	
+	public List<Categoria> findAll() {
+		
+		return repo.findAll();
+	}
+	
+	
+	
+	
 }
