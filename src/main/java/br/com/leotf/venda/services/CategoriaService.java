@@ -2,13 +2,11 @@ package br.com.leotf.venda.services;
 
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
-
 import br.com.leotf.venda.domain.Categoria;
 import br.com.leotf.venda.dto.CategoriaDTO;
 import br.com.leotf.venda.repositories.CategoriaRepository;
@@ -37,7 +35,8 @@ public class CategoriaService {
 	}
 	
 	public Categoria update(Categoria obj) {
-		find(obj.getId());
+		Categoria newObj = find(obj.getId());
+		updateData(newObj, obj);
 		return repo.save(obj);
 
 }
@@ -76,4 +75,8 @@ public class CategoriaService {
 		
 	}
 	
+	private void updateData(Categoria newObj, Categoria obj) {
+		newObj.setNome(obj.getNome());
+	
+	}
 }
