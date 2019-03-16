@@ -10,7 +10,7 @@ public class StandardError implements Serializable{
 	private long timeStamp;
 	
 	
-	public StandardError(Integer status, String msg, long timeStamp) {
+	public StandardError(Integer status, String msg, Long timeStamp) {
 		super();
 		this.status = status;
 		this.msg = msg;
