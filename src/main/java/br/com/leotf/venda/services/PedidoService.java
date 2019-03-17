@@ -41,6 +41,7 @@ public class PedidoService {
 	
 	
 	
+	
 	public Pedido find(Integer id) {
 		
 		Optional<Pedido> obj = repo.findById(id);
@@ -72,6 +73,7 @@ public class PedidoService {
 		}
 		
 		itemPedidoRepository.saveAll(obj.getItens());
+		System.out.println(obj);
 		return obj;
 	}
 
