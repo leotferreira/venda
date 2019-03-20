@@ -22,13 +22,13 @@ public class DevConfig {
 	private DBService dbService;
 	
 	@Value("${spring.jpa.hibernate.ddl-auto}")
-	private String Strategy;
+	private String strategy;
 	
 	
 	@Bean
 	public boolean instantiateDatabase() throws ParseException {
 		
-		if (!"create".equals(Strategy)) {
+		if (!"create".equals(strategy)) {
 			
 			return false;
 			
