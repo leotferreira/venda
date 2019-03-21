@@ -20,6 +20,7 @@ import br.com.leotf.venda.domain.PagamentoComCartao;
 import br.com.leotf.venda.domain.Pedido;
 import br.com.leotf.venda.domain.Produto;
 import br.com.leotf.venda.domain.enums.EstadoPagamento;
+import br.com.leotf.venda.domain.enums.Perfil;
 import br.com.leotf.venda.domain.enums.TipoCliente;
 import br.com.leotf.venda.repositories.CategoriaRepository;
 import br.com.leotf.venda.repositories.CidadeRepository;
@@ -131,17 +132,26 @@ public class DBService {
 	
 	
 	Cliente cli1 = new Cliente(null, "Maria Silva", "leo.teixeira27@gmail.com", "09912854215", TipoCliente.PESSOAFISICA, pe.encode("123"));
-	
 	cli1.getTelefones().addAll(Arrays.asList("26225859", "96588545"));
+	
+	
+	
+	Cliente cli2 = new Cliente(null, "Ana Costa", "ltf.solucoes@gmail.com", "29724284204", TipoCliente.PESSOAFISICA, pe.encode("123"));
+	cli2.getTelefones().addAll(Arrays.asList("99585525", "33568858"));
+	cli2.addPerfil(Perfil.ADMIN);
+	
+	
 	
 	Endereco e1 = new Endereco(null, "Rua Flores", "300", "Apto 303", "Jardim", "38220834", cli1, c1);
 	Endereco e2 = new Endereco(null, "Avenida Matos", "105", "Sala 800", "Centro", "38777012", cli1, c2);
+	Endereco e3 = new Endereco(null, "Avenida Floriano", "2106", null, "Centro", "28777012", cli2, c2);
+	
 	
 	cli1.getEnderecos().addAll(Arrays.asList(e1, e2));
+	cli2.getEnderecos().addAll(Arrays.asList(e3));
 	
-	
-	clienteRepository.saveAll(Arrays.asList(cli1));
-	enderecoRepository.saveAll(Arrays.asList(e1, e2));
+	clienteRepository.saveAll(Arrays.asList(cli1, cli2));
+	enderecoRepository.saveAll(Arrays.asList(e1, e2, e3));
 	
 	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyy HH:mm");
 	
