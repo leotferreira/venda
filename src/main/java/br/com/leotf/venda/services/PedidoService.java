@@ -4,8 +4,12 @@ import java.util.Date;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
+import br.com.leotf.venda.domain.Cliente;
 import br.com.leotf.venda.domain.ItemPedido;
 import br.com.leotf.venda.domain.PagamentoComBoleto;
 import br.com.leotf.venda.domain.Pedido;
@@ -13,6 +17,8 @@ import br.com.leotf.venda.domain.enums.EstadoPagamento;
 import br.com.leotf.venda.repositories.ItemPedidoRepository;
 import br.com.leotf.venda.repositories.PagamentoRepository;
 import br.com.leotf.venda.repositories.PedidoRepository;
+import br.com.leotf.venda.security.UserSS;
+import br.com.leotf.venda.services.exceptions.AuthorizationException;
 import br.com.leotf.venda.services.exceptions.ObjectNotFoundException;
 
 @Service
@@ -77,5 +83,21 @@ public class PedidoService {
 		emailService.sendOrderConfirmationHtmlEmail(obj);
 		return obj;
 	}
+	
+	public Page<Pedido> findPage(Integer page, Integer linesPerPage, String orderBy, String direction) {
+		UserSS user = UserService.authenticated();
+		if (user == null) {
+			throw new AuthorizationException("Acesso negado");
+			
+		}
+		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
+		Cliente cliente = clienteService.find(user.getId());
+		return repo.findByCliente(cliente, pageRequest);
+		
+	}
+	
+	
+	
+	
 
 }
