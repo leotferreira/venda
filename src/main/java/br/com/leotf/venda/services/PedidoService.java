@@ -27,20 +27,17 @@ public class PedidoService {
 	@Autowired
 	private PedidoRepository repo;
 	
-	
 	@Autowired
 	private BoletoService boletoService;
 	
 	@Autowired
 	private PagamentoRepository pagamentoRepository;
 	
-	
-	@Autowired
-	private ProdutoService produtoService;
-	
 	@Autowired
 	private ItemPedidoRepository itemPedidoRepository;
 	
+	@Autowired
+	private ProdutoService produtoService;
 	
 	@Autowired
 	private ClienteService clienteService;
@@ -48,14 +45,10 @@ public class PedidoService {
 	@Autowired
 	private EmailService emailService;
 	
-	
 	public Pedido find(Integer id) {
-		
 		Optional<Pedido> obj = repo.findById(id);
 		return obj.orElseThrow(() -> new ObjectNotFoundException(
 				"Objeto não encontrado! Id: " + id + ", Tipo: " + Pedido.class.getName()));
-		
-		
 	}
 	
 	public Pedido insert(Pedido obj) {
@@ -64,12 +57,10 @@ public class PedidoService {
 		obj.setCliente(clienteService.find(obj.getCliente().getId()));
 		obj.getPagamento().setEstado(EstadoPagamento.PENDENTE);
 		obj.getPagamento().setPedido(obj);
-		if ( obj.getPagamento() instanceof PagamentoComBoleto) {
+		if (obj.getPagamento() instanceof PagamentoComBoleto) {
 			PagamentoComBoleto pagto = (PagamentoComBoleto) obj.getPagamento();
 			boletoService.preencherPagamentoComBoleto(pagto, obj.getInstante());
-			
 		}
-		
 		obj = repo.save(obj);
 		pagamentoRepository.save(obj.getPagamento());
 		for (ItemPedido ip : obj.getItens()) {
@@ -78,9 +69,8 @@ public class PedidoService {
 			ip.setPreco(ip.getProduto().getPreco());
 			ip.setPedido(obj);
 		}
-		
 		itemPedidoRepository.saveAll(obj.getItens());
-		emailService.sendOrderConfirmationHtmlEmail(obj);
+		emailService.sendOrderConfirmationEmail(obj);
 		return obj;
 	}
 	
@@ -88,16 +78,9 @@ public class PedidoService {
 		UserSS user = UserService.authenticated();
 		if (user == null) {
 			throw new AuthorizationException("Acesso negado");
-			
 		}
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-		Cliente cliente = clienteService.find(user.getId());
+		Cliente cliente =  clienteService.find(user.getId());
 		return repo.findByCliente(cliente, pageRequest);
-		
 	}
-	
-	
-	
-	
-
 }
