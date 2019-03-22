@@ -3,6 +3,7 @@ package br.com.leotf.venda.services;
 import java.util.List;
 import java.util.Optional;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,12 +15,15 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.leotf.venda.domain.Cidade;
 import br.com.leotf.venda.domain.Cliente;
 import br.com.leotf.venda.domain.Endereco;
+import br.com.leotf.venda.domain.enums.Perfil;
 import br.com.leotf.venda.domain.enums.TipoCliente;
 import br.com.leotf.venda.dto.ClienteDTO;
 import br.com.leotf.venda.dto.ClienteNewDTO;
 
 import br.com.leotf.venda.repositories.ClienteRepository;
 import br.com.leotf.venda.repositories.EnderecoRepository;
+import br.com.leotf.venda.security.UserSS;
+import br.com.leotf.venda.services.exceptions.AuthorizationException;
 import br.com.leotf.venda.services.exceptions.DataIntegrityException;
 import br.com.leotf.venda.services.exceptions.ObjectNotFoundException;
 
@@ -38,6 +42,14 @@ public class ClienteService {
 	
 	
 	public Cliente find(Integer id) {
+		
+		UserSS user = UserService.authenticated();
+		if (user==null || !user.hasRole(Perfil.ADMIN) && !id.equals(user.getId())) {
+			throw new AuthorizationException("Acesso negado");
+			
+			
+		}
+		
 
 		Optional<Cliente> obj = repo.findById(id);
 		return obj.orElseThrow(() -> new ObjectNotFoundException(
