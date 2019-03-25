@@ -1,11 +1,13 @@
 package br.com.leotf.venda.services;
 
+import java.awt.image.BufferedImage;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
@@ -46,6 +48,13 @@ public class ClienteService {
 	@Autowired
 	private S3Service s3Service;
 	
+	
+	@Autowired
+	private ImageService imageService;
+	
+	@Value("${img.prefix.client.profile}")
+	private String prefix;
+	
 	public Cliente find(Integer id) {
 		
 		UserSS user = UserService.authenticated();
@@ -84,7 +93,7 @@ public class ClienteService {
 			repo.deleteById(id);
 		} catch (DataIntegrityException e) {
 
-			throw new DataIntegrityException("Não é possível excluir porque há pedidos relacionada");
+			throw new DataIntegrityException("Não é possível excluir porque há pedidos relacionado");
 
 		}
 
@@ -134,8 +143,19 @@ public class ClienteService {
 	}
 	
 	public URI uploadProfilePicture(MultipartFile multipartFile) {
-		return s3Service.uploadFile(multipartFile);
 		
+		UserSS user = UserService.authenticated();
+		if (user == null) {
+			throw new AuthorizationException("Acesso negado");
+			
+		}
+		
+		BufferedImage jpgImage = imageService.getJpgImageFromFile(multipartFile);
+		String fileName = prefix + user.getId() + ".jpg";
+		
+		return s3Service.uploadFile(imageService.getInputStream(jpgImage, "jpg"),fileName, "image");
+		
+					
 		
 	}
 
